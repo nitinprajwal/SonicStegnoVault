@@ -1,0 +1,10 @@
+numpy
+pyaudio
+wave
+rsa
+Pillow
+matplotlib
+pycryptodome
+scipy
+seaborn
+pydub

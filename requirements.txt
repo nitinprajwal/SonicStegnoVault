@@ -1,0 +1,15 @@
+numpy
+pyaudio
+wave
+rsa
+Pillow
+matplotlib
+pycryptodome
+scipy
+seaborn
+pydub
+streamlit
+plotly
+librosa
+scikit-image
+pandas
