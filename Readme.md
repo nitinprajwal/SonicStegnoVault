@@ -78,7 +78,10 @@ streamlit run app.py
 ![Embedding Interface](./blob/interface.png)
 
 ### Audio Analysis
-[Visualisation.webm](https://github.com/user-attachments/assets/8eed8b96-2fe3-469e-87cc-bd1cbdfc4d47)
+<video width="100%" controls>
+   <source src="./blob/Visualisation.webm" type="video/webm">
+   Your browser does not support the video tag.
+</video>
 
 ### Embedded Image
 ![Embedded Image](blob/stego_image.png)
