@@ -110,6 +110,13 @@ streamlit run app.py
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+## 🚀 Deployment
+
+This app is automatically deployed to Streamlit Cloud via GitHub Actions. You can view the live app at:
+https://sonicstegnovault.streamlit.app
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://sonicstegnovault.streamlit.app)
+
 ## 📄 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
