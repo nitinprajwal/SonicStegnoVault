@@ -1,0 +1,5 @@
+/venv
+/encryption/__pycache__
+/__pycache__/
+/steganography/__pycache__/
+/utils/__pycache__/
