@@ -13,3 +13,5 @@ plotly
 librosa
 scikit-image
 pandas
+opencv-python
+pandas

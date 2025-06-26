@@ -87,7 +87,7 @@ st.markdown("""
         </a>
     </div>
     <p class="copyright-text">
-        © 2024 Nitin Prajwal R. All rights reserved. This application is protected under international copyright laws.
+        © 2025 Nitin Prajwal R. All rights reserved. This application is protected under international copyright laws.
         Unauthorized reproduction or distribution is strictly prohibited.
     </p>
 </div>
@@ -138,11 +138,21 @@ def main():
 def embedding_process():
     st.header("📥 Embedding Process")
     
-    # File uploads
-    audio_file = st.file_uploader("Upload Audio File", type=['wav'])
-    carrier_image = st.file_uploader("Upload Carrier Image", type=['png', 'jpg', 'jpeg'])
+    # Select embedding type
+    embed_type = st.selectbox("Select Embedding Type", ["Audio in Image", "Audio in Audio", "Audio in Video"] )
+    # File uploads based on type
+    if embed_type == "Audio in Image":
+        audio_file = st.file_uploader("Upload Audio File to Hide", type=['wav'])
+        carrier_image = st.file_uploader("Upload Carrier Image", type=['png', 'jpg', 'jpeg'])
+    elif embed_type == "Audio in Audio":
+        audio_file = st.file_uploader("Upload Audio File to Hide", type=['wav'])
+        carrier_audio = st.file_uploader("Upload Carrier Audio", type=['wav'])
+    else:
+        audio_file = st.file_uploader("Upload Audio File to Hide", type=['wav'])
+        carrier_video = st.file_uploader("Upload Carrier Video", type=['mp4', 'avi', 'mov'])
 
-    if audio_file and carrier_image:
+    # Process embedding
+    if embed_type == "Audio in Image" and audio_file and carrier_image:
         # Read files
         audio_bytes = audio_file.read()
         image = Image.open(carrier_image)
@@ -175,7 +185,7 @@ def embedding_process():
                              labels={'value': 'Pixel Value', 'count': 'Frequency'})
             st.plotly_chart(fig, use_container_width=True)
 
-        if st.button("Embed Audio"):
+        if st.button("Embed Audio in Image"):
             with st.spinner("Processing..."):
                 # Generate keys
                 generate_keys()
@@ -183,9 +193,9 @@ def embedding_process():
                 # Encrypt and embed
                 encrypted_aes_key, nonce, tag, ciphertext = encrypt_audio(audio_bytes)
                 output_path = "stego_image.png"
-                embed_data_into_image(carrier_image, 
-                                    (encrypted_aes_key, nonce, tag, ciphertext),
-                                    output_path)
+                embed_data_into_image(carrier_image,
+                                      (encrypted_aes_key, nonce, tag, ciphertext),
+                                      output_path)
 
                 # Calculate metrics
                 stego_image = Image.open(output_path)
@@ -194,7 +204,7 @@ def embedding_process():
                 capacity = calculate_embedding_capacity(np.array(image))
 
                 # Display results
-                st.success("Audio successfully embedded!")
+                st.success("Audio embedded into image successfully!")
                 
                 # Metrics display
                 metrics_cols = st.columns(3)
@@ -267,22 +277,37 @@ def show_detailed_analysis(y, sr):
 
 def extraction_process():
     st.header("📤 Extraction Process")
+    # Select extraction type
+    extract_type = st.selectbox("Select Extraction Type", ["Audio from Image", "Audio from Audio", "Audio from Video"] )
     
-    # File uploads
-    stego_image = st.file_uploader("Upload Stego Image", type=['png'])
+    # File uploads based on type
+    if extract_type == "Audio from Image":
+        stego_input = st.file_uploader("Upload Stego Image", type=['png'])
+    elif extract_type == "Audio from Audio":
+        stego_input = st.file_uploader("Upload Stego Audio", type=['wav'])
+    else:
+        stego_input = st.file_uploader("Upload Stego Video", type=['mp4', 'avi', 'mov'])
     private_key = st.file_uploader("Upload Private Key", type=['pem'])
 
-    if stego_image and private_key:
+    if stego_input and private_key:
         # Save uploaded files
-        with open("stego_image.png", "wb") as f:
-            f.write(stego_image.getvalue())
+        fname = stego_input.name
+        with open(fname, "wb") as f:
+            f.write(stego_input.getvalue())
         with open("private.pem", "wb") as f:
             f.write(private_key.getvalue())
 
         if st.button("Extract Audio"):
             with st.spinner("Extracting audio..."):
-                # Extract and decrypt
-                extracted_data = extract_data_from_image("stego_image.png")
+                # Extract and decrypt based on type
+                if extract_type == "Audio from Image":
+                    extracted_data = extract_data_from_image(fname)
+                elif extract_type == "Audio from Audio":
+                    from steganography.extract_audio_from_audio import extract_data_from_audio
+                    extracted_data = extract_data_from_audio(fname)
+                else:
+                    from steganography.extract_audio_from_video import extract_data_from_video
+                    extracted_data = extract_data_from_video(fname)
                 decrypted_audio = decrypt_audio(*extracted_data)
                 
                 # Save decrypted audio
